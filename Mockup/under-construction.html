@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Under Construction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+  <link rel="icon" type="image/jpg" href="Favicon.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --amber: #ffb300;
+      --amber-dim: #7a5500;
+      --amber-glow: rgba(255,179,0,0.15);
+      --red: #ff3b3b;
+      --grid: rgba(255,179,0,0.04);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--amber);
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+    }
+
+    /* Scanlines */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.18) 2px,
+        rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Grid */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 2rem;
+    }
+
+
+
+    /* Blinking cursor dot */
+    .cursor-blink {
+      display: inline-block;
+      width: 10px; height: 22px;
+      background: var(--amber);
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Header line */
+    .sys-line {
+      font-size: 0.72rem;
+      color: var(--amber-dim);
+      letter-spacing: 0.2em;
+      margin-bottom: 3rem;
+      animation: fadeIn 0.8s ease both;
+    }
+
+    /* Big headline */
+    .headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 14vw, 12rem);
+      line-height: 0.88;
+      letter-spacing: 0.02em;
+      text-align: center;
+      text-shadow:
+        0 0 30px var(--amber),
+        0 0 80px rgba(255,179,0,0.4);
+      animation: fadeIn 0.5s ease 0.2s both, flicker 8s infinite 2s;
+    }
+
+    @keyframes flicker {
+      0%, 95%, 97%, 100% { opacity: 1; }
+      96% { opacity: 0.4; }
+    }
+
+    .headline span {
+      display: block;
+      color: var(--red);
+      text-shadow: 0 0 30px var(--red), 0 0 80px rgba(255,59,59,0.4);
+      font-size: 0.52em;
+      letter-spacing: 0.12em;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      margin-top: 3.5rem;
+      width: min(520px, 90vw);
+      animation: fadeIn 0.5s ease 0.6s both;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: var(--amber-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 14px;
+      border: 1px solid var(--amber-dim);
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,179,0,0.04);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--amber);
+      box-shadow: 0 0 12px var(--amber);
+      animation: fill 3s cubic-bezier(0.25, 1, 0.5, 1) 1s forwards;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 20px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6));
+      animation: shimmer 1.5s ease infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes fill {
+      to { width: 68%; }
+    }
+
+    .pct {
+      animation: countUp 3s ease 1s both;
+    }
+
+    @keyframes countUp {
+      from { opacity: 0; }
+    }
+
+    /* Terminal log */
+    .log {
+      margin-top: 2.5rem;
+      width: min(520px, 90vw);
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      line-height: 1.8;
+      color: var(--amber-dim);
+      animation: fadeIn 0.5s ease 1s both;
+    }
+
+    .log-line {
+      opacity: 0;
+      animation: revealLine 0.3s ease forwards;
+    }
+    .log-line:nth-child(1) { animation-delay: 1.2s; }
+    .log-line:nth-child(2) { animation-delay: 1.9s; }
+    .log-line:nth-child(3) { animation-delay: 2.6s; }
+    .log-line:nth-child(4) { animation-delay: 3.3s; }
+    .log-line:nth-child(5) { animation-delay: 4.0s; }
+
+    .log-line .ok { color: #00e676; }
+    .log-line .err { color: var(--red); }
+    .log-line .warn { color: var(--amber); }
+
+    @keyframes revealLine {
+      from { opacity: 0; transform: translateX(-6px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom text */
+    .footer-msg {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--amber-dim);
+      z-index: 20;
+      white-space: nowrap;
+      animation: fadeIn 1s ease 4.5s both;
+    }
+
+    /* Corner decorations */
+    .corner {
+      position: fixed;
+      width: 50px; height: 50px;
+      z-index: 20;
+      opacity: 0.4;
+    }
+    .corner::before, .corner::after {
+      content: '';
+      position: absolute;
+      background: var(--amber);
+    }
+    .corner::before { width: 100%; height: 2px; top: 0; left: 0; }
+    .corner::after  { width: 2px; height: 100%; top: 0; left: 0; }
+    .corner.tl { top: 12px; left: 12px; }
+    .corner.tr { top: 12px; right: 12px; transform: scaleX(-1); }
+    .corner.bl { bottom: 12px; left: 12px; transform: scaleY(-1); }
+    .corner.br { bottom: 12px; right: 12px; transform: scale(-1); }
+  </style>
+</head>
+<body>
+
+  <div class="vignette"></div>
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <div class="container">
+    <div class="sys-line">SYS://WEBROOT &nbsp;|&nbsp; STATUS: ACTIVE BUILD &nbsp;|&nbsp; NODE_ENV=PRODUCTION</div>
+
+    <div class="headline">
+      UNDER<br>
+      <span>CONSTRUCTION</span>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>BUILD PROGRESS</span>
+        <span class="pct" id="pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="bar"></div>
+      </div>
+    </div>
+
+    <div class="log">
+      <div class="log-line">&gt; <span class="ok">[OK]</span> &nbsp;Dependencies installed &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(3/3)</div>
+      <div class="log-line">&gt; <span class="ok">[OK]</span> &nbsp;Assets compiled &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(47 files)</div>
+      <div class="log-line">&gt; <span class="warn">[~~]</span> &nbsp;Backend services &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RUNNING</div>
+      <div class="log-line">&gt; <span class="warn">[~~]</span> &nbsp;Content pipeline &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IN PROGRESS</div>
+      <div class="log-line">&gt; <span class="err">[--]</span> &nbsp;Launch sequence &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PENDING<span class="cursor-blink"></span></div>
+    </div>
+  </div>
+
+  <div class="footer-msg">SOMETHING GREAT IS BEING BUILT &nbsp;&mdash;&nbsp; CHECK BACK SOON</div>
+
+  <script>
+    // Animate percentage counter to match fill animation
+    const pctEl = document.getElementById('pct');
+    let start = null;
+    const duration = 3000;
+    const delay = 1000;
+
+    setTimeout(() => {
+      function step(ts) {
+        if (!start) start = ts;
+        const elapsed = ts - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        pctEl.textContent = Math.round(eased * 68) + '%';
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }, delay);
+  </script>
+</body>
+</html>
